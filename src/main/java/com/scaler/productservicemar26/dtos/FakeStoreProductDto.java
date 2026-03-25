@@ -1,5 +1,7 @@
 package com.scaler.productservicemar26.dtos;
 
+import com.scaler.productservicemar26.models.Category;
+import com.scaler.productservicemar26.models.Product;
 import lombok.Getter;
 import lombok.Setter;
 

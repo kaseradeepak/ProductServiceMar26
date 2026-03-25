@@ -1,14 +1,17 @@
 package com.scaler.productservicemar26.controllers;
 
+import com.scaler.productservicemar26.ProductServiceMar26Application;
+import com.scaler.productservicemar26.dtos.ProductNotFoundExceptionDto;
+import com.scaler.productservicemar26.exceptions.ProductNotFoundException;
 import com.scaler.productservicemar26.models.Product;
 import com.scaler.productservicemar26.services.FakeStoreProductService;
 import com.scaler.productservicemar26.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 @RestController
@@ -32,18 +35,31 @@ public class ProductController {
     // https://www.amazon.in/products/123
     // http://localhost:8080/products/123
     @GetMapping("/{productId}")
-    public Product getProductById(@PathVariable("productId") Long productId) {
+    public ResponseEntity<Product> getProductById(@PathVariable("productId") Long productId) throws ProductNotFoundException {
+        if (productId <= 0) {
+            throw new IllegalArgumentException("productId should be greater than 0");
+        }
+
+        //Either handle the exception or throw it as it is.
         Product product = productService.getProductById(productId);
-        return product;
+
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     //Get all the products.
     // http://localhost:8080/products
     @GetMapping()
     public List<Product> getAllProducts() {
-        return null;
+        return productService.getAllProducts();
     }
 
+//    @ExceptionHandler(ProductNotFoundException.class)
+//    public ResponseEntity<String> handleProductNotFoundException(ProductNotFoundException e) {
+//        return new ResponseEntity<>(
+//                e.getMessage(),
+//                HttpStatus.NOT_FOUND
+//        );
+//    }
 }
 
 // ProductController -> ProductService
